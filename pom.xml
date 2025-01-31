@@ -86,6 +86,36 @@
             <artifactId>java-jwt</artifactId>
             <version>4.4.0</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/software.amazon.awssdk/sqs -->
+
+        <!-- https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-starter -->
+        <dependency>
+            <groupId>io.awspring.cloud</groupId>
+            <artifactId>spring-cloud-aws-starter-sqs</artifactId>
+            <version>3.1.1</version> <!-- Verifique a versão mais recente -->
+        </dependency>
+
+        <!-- AWS SDK v2 (necessário para Spring Boot 3+) -->
+        <!-- https://mvnrepository.com/artifact/software.amazon.awssdk/sqs -->
+        <dependency>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>sqs</artifactId>
+            <version>2.30.8</version>
+        </dependency>
+        <dependency>
+            <groupId>io.awspring.cloud</groupId>
+            <artifactId>spring-cloud-aws-starter-ses</artifactId>
+            <version>3.1.0</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/software.amazon.awssdk/ses -->
+        <dependency>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>ses</artifactId>
+            <version>2.30.8</version>
+        </dependency>
+
+
+
     </dependencies>
 
     <build>
