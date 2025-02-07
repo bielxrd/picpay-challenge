@@ -16,4 +16,5 @@ public class PayerResponse {
     private String name;
     private String email;
     private String document;
+    private long phoneNumber;
 }
