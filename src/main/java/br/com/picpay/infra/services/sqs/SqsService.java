@@ -15,10 +15,10 @@ public class SqsService {
     private final SqsTemplate sqsTemplate;
 
     @Async
-    public void sendEmailMessage(String queueName, String message, Map<String, Object> headers) {
+    public void sendMessage(String queueName, String destination, Map<String, Object> headers) {
         sqsTemplate.send(builder -> {
             builder.queue(queueName)
-                    .payload(message)
+                    .payload(destination)
                     .headers(headers);
         });
     }
