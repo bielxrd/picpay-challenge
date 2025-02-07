@@ -1,16 +1,12 @@
 package br.com.picpay.shared.utils;
 
-import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Component;
+import org.springframework.security.crypto.argon2.Argon2PasswordEncoder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-@Component
-@RequiredArgsConstructor
 public class AuthUtils {
 
-    private final PasswordEncoder passwordEncoder;
-
-    public boolean isPasswordMatch(String rawPassword, String encodedPassword) {
+    public static boolean isPasswordMatch(String rawPassword, String encodedPassword) {
+        var passwordEncoder = new Argon2PasswordEncoder(16,32, 1, 65536, 4);
         return passwordEncoder.matches(rawPassword, encodedPassword);
     }
 }
