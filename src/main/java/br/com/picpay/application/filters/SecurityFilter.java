@@ -19,8 +19,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SecurityFilter extends OncePerRequestFilter {
 
-    private final JwtUtils jwtUtils;
-
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         SecurityContextHolder.getContext().setAuthentication(null);
@@ -31,7 +29,7 @@ public class SecurityFilter extends OncePerRequestFilter {
             return;
         }
 
-        var decodedJwt = jwtUtils.decodeToken(authorization);
+        var decodedJwt = JwtUtils.decodeToken(authorization);
 
         String role = decodedJwt.getClaim("role").asString();
         List<GrantedAuthority> authorities = List.of((GrantedAuthority) () -> role);
