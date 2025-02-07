@@ -2,6 +2,7 @@ package br.com.picpay.application.controllers;
 
 import br.com.picpay.application.dtos.BaseResponsePageable;
 import br.com.picpay.application.dtos.transfer.TransferRequest;
+import br.com.picpay.application.dtos.transfer.TransfersAmountListResponse;
 import br.com.picpay.application.dtos.transfer.TransfersListResponse;
 import br.com.picpay.application.facade.TransferFacade;
 import lombok.RequiredArgsConstructor;
@@ -10,6 +11,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -46,5 +48,12 @@ public class TransferController {
                                                                                           @RequestParam(required = false, defaultValue = "0") Integer pageNumber,
                                                                                           @RequestParam(required = false, defaultValue = "5") Integer pageSize) {
         return ResponseEntity.ok(this.transferFacade.getTransfersByUserIdAndPageable(UUID.fromString(principal.getName()), pageNumber, pageSize));
+    }
+
+    @GetMapping("/amount")
+    public ResponseEntity<TransfersAmountListResponse> getAmountTransferredFilteredByDateRange(Principal principal,
+                                                                                               @RequestParam LocalDateTime startDate,
+                                                                                               @RequestParam LocalDateTime endDate) {
+        return ResponseEntity.ok(this.transferFacade.getAmountTransferredFilteredByDateRange(UUID.fromString(principal.getName()), startDate, endDate));
     }
 }
