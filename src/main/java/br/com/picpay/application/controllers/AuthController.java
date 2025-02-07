@@ -2,7 +2,6 @@ package br.com.picpay.application.controllers;
 
 import br.com.picpay.application.dtos.auth.AuthRequest;
 import br.com.picpay.application.facade.UserFacade;
-import br.com.picpay.application.services.auth.AuthApplicationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
