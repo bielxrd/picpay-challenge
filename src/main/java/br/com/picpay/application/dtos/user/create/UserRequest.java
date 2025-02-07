@@ -14,13 +14,14 @@ public class UserRequest {
     private String name;
     private String document;
     private String email;
+    private long phoneNumber;
     private String password;
     private double balance = 0.0;
     private ERole role;
 
     public User toEntity() {
        Role roleEntity = Role.builder().roleType(role).build();
-        User user = new User(null, name, document, email, password, roleEntity);
+        User user = new User(null, name, document, email, phoneNumber, password, roleEntity);
         roleEntity.setUser(user);
         return user;
     }

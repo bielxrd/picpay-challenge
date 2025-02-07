@@ -21,8 +21,9 @@ public class User {
     private String document;
     @Column(unique = true)
     private String email;
+    @Column(unique = true)
+    private long phoneNumber;
     private String password;
-
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Role role;
 }

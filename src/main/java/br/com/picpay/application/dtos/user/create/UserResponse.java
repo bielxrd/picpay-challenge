@@ -17,6 +17,7 @@ public class UserResponse {
     private UUID id;
     private String name;
     private String email;
+    private long phoneNumber;
     private BalanceResponse balance;
     private WalletResponse wallet;
 }
