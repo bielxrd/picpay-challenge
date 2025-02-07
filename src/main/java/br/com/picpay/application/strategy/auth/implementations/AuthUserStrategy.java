@@ -12,18 +12,16 @@ import java.util.UUID;
 @Component
 @RequiredArgsConstructor
 public class AuthUserStrategy implements IAuthStrategy {
-    private final AuthUtils authUtils;
-    private final JwtUtils jwtUtils;
 
     @Override
     public String auth(String rawPassword, String encodedPassword, ERole role, UUID userId) {
-        boolean matches = this.authUtils.isPasswordMatch(rawPassword, encodedPassword);
+        boolean matches = AuthUtils.isPasswordMatch(rawPassword, encodedPassword);
 
         if (!matches) {
             throw new RuntimeException("Invalid credentials");
         }
 
-        return this.jwtUtils.generateToken(userId, role);
+        return JwtUtils.generateToken(userId, role);
     }
 
     @Override

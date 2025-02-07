@@ -13,18 +13,15 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class AuthShopkeeperStrategy implements IAuthStrategy  {
 
-    private final AuthUtils authUtils;
-    private final JwtUtils jwtUtils;
-
     @Override
     public String auth(String email, String password, ERole role, UUID userId) {
-        boolean matches = this.authUtils.isPasswordMatch(email, password);
+        boolean matches = AuthUtils.isPasswordMatch(email, password);
 
         if (!matches) {
             throw new RuntimeException("Invalid credentials");
         }
 
-        return this.jwtUtils.generateToken(userId, role);
+        return JwtUtils.generateToken(userId, role);
     }
 
     @Override
