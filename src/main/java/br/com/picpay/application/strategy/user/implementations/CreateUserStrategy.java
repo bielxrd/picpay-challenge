@@ -40,6 +40,7 @@ public class CreateUserStrategy implements ICreateUserStrategy {
                 .id(userEntity.getId())
                 .name(userEntity.getName())
                 .email(userEntity.getEmail())
+                .phoneNumber(userEntity.getPhoneNumber())
                 .balance(new BalanceResponse(balanceResponse.getBalanceId(), balanceResponse.getBalance()))
                 .wallet(new WalletResponse(wallet.getId()))
                 .build();
