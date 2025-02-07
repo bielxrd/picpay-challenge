@@ -11,6 +11,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -35,6 +36,7 @@ public class TransferApplicationService {
                 .name(payer.name())
                 .document(payer.document())
                 .email(payer.email())
+                .phoneNumber(payer.phoneNumber())
                 .build();
 
         ReceiverResponse receiverResponse = ReceiverResponse.builder()
@@ -42,6 +44,7 @@ public class TransferApplicationService {
                 .name(receiver.name())
                 .document(receiver.document())
                 .email(receiver.email())
+                .phoneNumber(receiver.phoneNumber())
                 .build();
 
         return TransferResponse.builder()
@@ -128,6 +131,35 @@ public class TransferApplicationService {
                 }).toList();
 
         return new BaseResponsePageable<List<TransfersListResponse>>(data, transfersEntities.getNumber(), transfersEntities.getSize(), transfersEntities.getTotalElements(), transfersEntities.getTotalPages());
+    }
+
+    public TransfersAmountListResponse getTransfersAmount(UUID userId, LocalDateTime startDate, LocalDateTime endDate) {
+        var transfersList = this.transferRepository.findByReceiverIdAndTransferDateBetween(userId, startDate, endDate);
+
+        Double total = transfersList.stream()
+                .mapToDouble(Transfer::getValue)
+                .sum();
+
+        BigDecimal totalBigDecimal = BigDecimal.valueOf(total);
+
+        var transfersListResponseDto = transfersList.stream()
+                .map(transfer -> TransfersListResponse.builder()
+                        .transferId(transfer.getId())
+                        .transferDate(transfer.getTransferDate())
+                        .value(transfer.getValue())
+                        .payer(PayerResponse.builder()
+                                .walletId(transfer.getPayerId())
+                                .name(transfer.getUserPayer().getName())
+                                .email(transfer.getUserPayer().getEmail())
+                                .document(transfer.getUserPayer().getDocument())
+                                .build())
+                        .transferType(TransferType.RECEIPT)
+                        .build()).toList();
+
+        return TransfersAmountListResponse.builder()
+                .amount(totalBigDecimal)
+                .transfers(transfersListResponseDto)
+                .build();
     }
 
     private boolean isPayer(UUID userId,  Transfer transfer) {
