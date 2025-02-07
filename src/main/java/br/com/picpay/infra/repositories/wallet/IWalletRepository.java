@@ -19,7 +19,8 @@ public interface IWalletRepository extends JpaRepository<Wallet, UUID> {
         w.type, 
         COALESCE(u.email, u_shop.email), 
         COALESCE(u.name, u_shop.name), 
-        COALESCE(u.document, u_shop.document)
+        COALESCE(u.document, u_shop.document),
+        COALESCE(u.phoneNumber, u_shop.phoneNumber)
     )
     FROM tb_wallet w
     LEFT JOIN tb_user_balance ub ON w.balance = ub.id AND ub.user IS NOT NULL
