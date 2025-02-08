@@ -30,21 +30,21 @@ public class TransferController {
 
     @PreAuthorize("hasRole('USER')")
     @GetMapping("/payed")
-    public ResponseEntity<BaseResponsePageable<List<TransfersListResponse>>> getTransfersPayedByUserIdAndPageable(Principal principal,
+    public ResponseEntity<BaseResponsePageable> getTransfersPayedByUserIdAndPageable(Principal principal,
                                                                                                                   @RequestParam(required = false, defaultValue = "0") Integer pageNumber,
                                                                                                                   @RequestParam(required = false, defaultValue = "5") Integer pageSize) {
         return ResponseEntity.ok(this.transferFacade.getTransfersPayedByUserIdAndPageable(UUID.fromString(principal.getName()), pageNumber, pageSize));
     }
 
     @GetMapping("/received")
-    public ResponseEntity<BaseResponsePageable<List<TransfersListResponse>>> getTransfersReceived(Principal principal,
+    public ResponseEntity<BaseResponsePageable> getTransfersReceived(Principal principal,
                                                                                                   @RequestParam(required = false, defaultValue = "0") Integer pageNumber,
                                                                                                   @RequestParam(required = false, defaultValue = "5") Integer pageSize) {
         return ResponseEntity.ok(this.transferFacade.getTransfersReceivedByUserIdAndPageable(UUID.fromString(principal.getName()), pageNumber, pageSize));
     }
 
     @GetMapping("/")
-    public ResponseEntity<BaseResponsePageable<List<TransfersListResponse>>> getTransfers(Principal principal,
+    public ResponseEntity<BaseResponsePageable> getTransfers(Principal principal,
                                                                                           @RequestParam(required = false, defaultValue = "0") Integer pageNumber,
                                                                                           @RequestParam(required = false, defaultValue = "5") Integer pageSize) {
         return ResponseEntity.ok(this.transferFacade.getTransfersByUserIdAndPageable(UUID.fromString(principal.getName()), pageNumber, pageSize));
