@@ -8,13 +8,14 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.context.annotation.Bean;
 
+import java.io.Serializable;
 import java.util.UUID;
 
 @Builder
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserProfileDto {
+public class UserProfileDto implements Serializable {
     private UUID id;
     private String name;
     private String email;

@@ -1,6 +1,8 @@
 package br.com.picpay.application.enums;
 
-public enum TransferType {
+import java.io.Serializable;
+
+public enum TransferType implements Serializable {
     PAYMENT,
     RECEIPT
 }
