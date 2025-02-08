@@ -4,6 +4,8 @@ import br.com.picpay.application.dtos.wallet.WalletUserResponse;
 import br.com.picpay.domain.entities.wallet.Wallet;
 import br.com.picpay.infra.repositories.wallet.IWalletRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
@@ -23,6 +25,10 @@ public class WalletApplicationService {
         return this.walletRepository.save(walletRequest);
     }
 
+    @Caching(cacheable = {
+            @Cacheable(value = "wallet-user", key = "#payerId"),
+            @Cacheable(value = "wallet-user", key = "#receiverId")
+    })
     public Map<UUID, WalletUserResponse> getWallets(UUID payerId, UUID receiverId) {
         WalletUserResponse walletPayer = this.walletRepository.findWalletUserByWalletId(payerId)
                 .orElseThrow(() -> new IllegalArgumentException("Payer not found"));

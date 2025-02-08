@@ -59,7 +59,7 @@ public class TransferApplicationService {
     // application layer -> casos de uso, servicos de aplicacao, orquestracao
     // infra layer -> banco de dados, servicos externos, aws, gcp, azure
 
-    public  BaseResponsePageable<List<TransfersListResponse>> getTransfersReceivedByUserId(UUID userId, int pageNumber, int pageSize) {
+    public  BaseResponsePageable getTransfersReceivedByUserId(UUID userId, int pageNumber, int pageSize) {
         PageRequest pageRequest = PageRequest.of(pageNumber, pageSize);
         var transfersEntities = this.transferRepository.findByReceiverId(userId, pageRequest);
 
@@ -78,10 +78,10 @@ public class TransferApplicationService {
                         .build())
                 .toList();
 
-        return new BaseResponsePageable<List<TransfersListResponse>>(data, transfersEntities.getNumber(), transfersEntities.getSize(), transfersEntities.getTotalElements(), transfersEntities.getTotalPages());
+        return new BaseResponsePageable(data, transfersEntities.getNumber(), transfersEntities.getSize(), transfersEntities.getTotalElements(), transfersEntities.getTotalPages());
     }
 
-    public BaseResponsePageable<List<TransfersListResponse>> getTransfersPayedByUserId(UUID userId, int pageNumber, int pageSize) {
+    public BaseResponsePageable getTransfersPayedByUserId(UUID userId, int pageNumber, int pageSize) {
         PageRequest pageRequest = PageRequest.of(pageNumber, pageSize);
         var transfersEntities = this.transferRepository.findByPayerId(userId, pageRequest);
 
@@ -99,10 +99,10 @@ public class TransferApplicationService {
                         .transferType(TransferType.PAYMENT)
                         .build()).toList();
 
-        return new BaseResponsePageable<List<TransfersListResponse>>(data, transfersEntities.getNumber(), transfersEntities.getSize(), transfersEntities.getTotalElements(), transfersEntities.getTotalPages());
+        return new BaseResponsePageable(data, transfersEntities.getNumber(), transfersEntities.getSize(), transfersEntities.getTotalElements(), transfersEntities.getTotalPages());
     }
 
-    public BaseResponsePageable<List<TransfersListResponse>> getTransfersGenericByUserId(UUID userId, int pageNumber, int pageSize) {
+    public BaseResponsePageable getTransfersGenericByUserId(UUID userId, int pageNumber, int pageSize) {
         PageRequest pageRequest = PageRequest.of(pageNumber, pageSize);
         var transfersEntities = this.transferRepository.findByPayerIdOrReceiverId(userId, userId, pageRequest);
 
@@ -130,7 +130,7 @@ public class TransferApplicationService {
                             .build();
                 }).toList();
 
-        return new BaseResponsePageable<List<TransfersListResponse>>(data, transfersEntities.getNumber(), transfersEntities.getSize(), transfersEntities.getTotalElements(), transfersEntities.getTotalPages());
+        return new BaseResponsePageable(data, transfersEntities.getNumber(), transfersEntities.getSize(), transfersEntities.getTotalElements(), transfersEntities.getTotalPages());
     }
 
     public TransfersAmountListResponse getTransfersAmount(UUID userId, LocalDateTime startDate, LocalDateTime endDate) {
