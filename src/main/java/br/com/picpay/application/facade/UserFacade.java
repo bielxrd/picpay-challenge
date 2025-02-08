@@ -8,6 +8,7 @@ import br.com.picpay.application.factory.UserStrategyFactory;
 import br.com.picpay.application.services.auth.AuthApplicationService;
 import br.com.picpay.application.services.user.UserApplicationService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
@@ -33,6 +34,7 @@ public class UserFacade {
         return this.authApplicationService.auth(email, password);
     }
 
+    @Cacheable(value = "user-profile", key="#id" )
     public UserProfileDto getUserProfile(UUID id) {
         return this.userApplicationService.getUserProfile(id);
     }

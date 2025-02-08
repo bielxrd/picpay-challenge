@@ -14,6 +14,10 @@ import br.com.picpay.infra.services.sqs.SqsService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,6 +34,7 @@ public class TransferFacade {
     private final TransferApplicationService transferApplicationService;
     private final BalanceApplicationService balanceApplicationService;
     private final SqsService sqsService;
+    private final CacheManager cacheManager;
 
     @Value("${spring.cloud.aws.sqs.endpoint}")
     private String queueName;
@@ -37,12 +42,25 @@ public class TransferFacade {
     @Value("${spring.cloud.aws.sqs.endpoint.sms}")
     private String queueSmsName;
 
+
+    @Caching(evict = {
+            @CacheEvict(value = {"transfers-received", "transfers-payed", "transfers-generic", "transfers-amount-received"},
+                    key = "#transferRequest.payerId"),
+            @CacheEvict(value = {"transfers-received", "transfers-payed", "transfers-generic", "transfers-amount-received"},
+                    key = "#transferRequest.receiverId"),
+            @CacheEvict(value = {"user-profile"},
+            key = "#transferRequest.receiverId"),
+            @CacheEvict(value = {"user-profile"},
+                    key = "#transferRequest.payerId")
+    })
     public TransferResponse transfer(TransferRequest transferRequest) {
         TransferResponse transferResponse = executeTransfer(transferRequest);
         notifyEmailTransfer(transferResponse, transferRequest.getValue());
         notifySmsTransfer(transferResponse, transferRequest.getValue());
+        evictTransfersPagedCachedForUser(transferRequest.getPayerId(), "transfers-payed");
         return transferResponse;
     }
+
 
     @Transactional(rollbackFor = Exception.class)
     protected TransferResponse executeTransfer(TransferRequest transferRequest) {
@@ -100,18 +118,40 @@ public class TransferFacade {
         }
     }
 
-    public BaseResponsePageable<List<TransfersListResponse>> getTransfersReceivedByUserIdAndPageable(UUID userId, int pageNumber, int pageSize) {
+    private void evictTransfersPagedCachedForUser(UUID userId, String cacheName) {
+        var cache = cacheManager.getCache(cacheName);
+
+        if (cache instanceof org.springframework.cache.concurrent.ConcurrentMapCache concurrentMapCache) {
+            var nativeCache = concurrentMapCache.getNativeCache(); // retorna o Map<Object,Object>
+            
+            nativeCache.keySet().removeIf(key -> {
+                if (key instanceof String k) {
+                    return k.startsWith(userId.toString() + "-");
+                }
+                return false;
+            });
+        } else {
+            log.error("Cache is not a ConcurrentMapCache");
+        }
+
+    }
+
+    @Cacheable(value = "transfers-received", key = "#userId + '-' + #pageNumber + '-' + #pageSize")
+    public BaseResponsePageable getTransfersReceivedByUserIdAndPageable(UUID userId, int pageNumber, int pageSize) {
         return this.transferApplicationService.getTransfersReceivedByUserId(userId, pageNumber, pageSize);
     }
 
-    public BaseResponsePageable<List<TransfersListResponse>> getTransfersPayedByUserIdAndPageable(UUID userId, int pageNumber, int pageSize) {
+    @Cacheable(value = "transfers-payed", key = "#userId + '-' + #pageNumber + '-' + #pageSize")
+    public BaseResponsePageable getTransfersPayedByUserIdAndPageable(UUID userId, int pageNumber, int pageSize) {
         return this.transferApplicationService.getTransfersPayedByUserId(userId, pageNumber, pageSize);
     }
 
-    public BaseResponsePageable<List<TransfersListResponse>> getTransfersByUserIdAndPageable(UUID userId, int pageNumber, int pageSize) {
+    @Cacheable(value = "transfers-generic", key = "#userId + '-' + #pageNumber + '-' + #pageSize")
+    public BaseResponsePageable getTransfersByUserIdAndPageable(UUID userId, int pageNumber, int pageSize) {
         return this.transferApplicationService.getTransfersGenericByUserId(userId, pageNumber, pageSize);
     }
 
+    @Cacheable(value = "transfers-received-amount", key = "#userId + '-' + #pageNumber + '-' + #pageSize")
     public TransfersAmountListResponse getAmountTransferredFilteredByDateRange(UUID userId, LocalDateTime startDate, LocalDateTime endDate) {
         return this.transferApplicationService.getTransfersAmount(userId, startDate, endDate);
     }
