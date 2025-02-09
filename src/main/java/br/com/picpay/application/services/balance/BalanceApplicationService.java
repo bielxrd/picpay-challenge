@@ -12,11 +12,14 @@ import br.com.picpay.domain.services.balance.BalanceDomainService;
 import br.com.picpay.infra.repositories.balance.IShopKeeperBalanceRepository;
 import br.com.picpay.infra.repositories.balance.IUserBalanceRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
+import java.util.UUID;
 
+@Log4j2
 @Service
 @RequiredArgsConstructor
 public class BalanceApplicationService {
@@ -66,6 +69,23 @@ public class BalanceApplicationService {
         }
 
         transferBalanceStrategy.transfer(balancePayer, walletReceiver.balance(), value, walletPayer.walletId(), walletReceiver.walletId());
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public UUID depositBalance(UUID userId, double value) {
+        var balance = this.userBalanceRepository.findByUserId(userId)
+                .orElseThrow(() -> new RuntimeException("Balance not found"));
+
+        var newBalance = balance.getBalance() + value;
+        balance.setBalance(newBalance);
+
+        try {
+            var response = this.userBalanceRepository.save(balance);
+            return response.getId();
+        } catch (Exception e) {
+            log.error("Error to deposit balance", e);
+            return null;
+        }
     }
 
 }
