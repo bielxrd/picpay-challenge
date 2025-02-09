@@ -12,6 +12,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @Builder
 public class ReceiverResponse {
+    private UUID id;
     private UUID walletId;
     private String name;
     private String email;

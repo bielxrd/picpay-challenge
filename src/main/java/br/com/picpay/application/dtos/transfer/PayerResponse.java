@@ -13,6 +13,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @Builder
 public class PayerResponse implements Serializable {
+    private UUID id;
     private UUID walletId;
     private String name;
     private String email;
