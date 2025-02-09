@@ -1,10 +1,9 @@
 package br.com.picpay.application.facade;
 
-import br.com.picpay.application.dtos.BaseResponsePageable;
+import br.com.picpay.application.dtos.transfer.BaseResponsePageable;
 import br.com.picpay.application.dtos.transfer.TransferRequest;
 import br.com.picpay.application.dtos.transfer.TransferResponse;
 import br.com.picpay.application.dtos.transfer.TransfersAmountListResponse;
-import br.com.picpay.application.dtos.transfer.TransfersListResponse;
 import br.com.picpay.application.dtos.wallet.WalletUserResponse;
 import br.com.picpay.application.enums.TransferType;
 import br.com.picpay.application.services.balance.BalanceApplicationService;
@@ -14,19 +13,14 @@ import br.com.picpay.infra.services.sqs.SqsService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
-import org.springframework.data.redis.cache.RedisCache;
-import org.springframework.data.redis.cache.RedisCacheWriter;
 import org.springframework.data.redis.core.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -132,7 +126,6 @@ public class TransferFacade {
             log.info("Removed {} cache entries for user {} with pattern {}",
                     keys.size(), userId, keyPattern);
 
-            // Log specific keys if in debug mode
             if (log.isDebugEnabled()) {
                 keys.forEach(key -> log.debug("Removed cache key: {}", key));
             }

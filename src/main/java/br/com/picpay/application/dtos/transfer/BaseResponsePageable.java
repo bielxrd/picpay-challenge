@@ -1,6 +1,5 @@
-package br.com.picpay.application.dtos;
+package br.com.picpay.application.dtos.transfer;
 
-import br.com.picpay.application.dtos.transfer.TransfersListResponse;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

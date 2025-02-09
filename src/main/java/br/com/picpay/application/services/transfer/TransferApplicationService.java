@@ -1,6 +1,6 @@
 package br.com.picpay.application.services.transfer;
 
-import br.com.picpay.application.dtos.BaseResponsePageable;
+import br.com.picpay.application.dtos.transfer.BaseResponsePageable;
 import br.com.picpay.application.dtos.transfer.*;
 import br.com.picpay.application.dtos.wallet.WalletUserResponse;
 import br.com.picpay.application.enums.TransferType;
@@ -8,12 +8,10 @@ import br.com.picpay.domain.entities.transfer.Transfer;
 import br.com.picpay.infra.repositories.transfer.ITransferRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.UUID;
 
 @Service
