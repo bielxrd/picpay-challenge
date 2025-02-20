@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Map;
 import java.util.UUID;
@@ -25,10 +26,7 @@ public class WalletApplicationService {
         return this.walletRepository.save(walletRequest);
     }
 
-    @Caching(cacheable = {
-            @Cacheable(value = "wallet-user", key = "#payerId"),
-            @Cacheable(value = "wallet-user", key = "#receiverId")
-    })
+    @Transactional(rollbackFor = Exception.class)
     public Map<UUID, WalletUserResponse> getWallets(UUID payerId, UUID receiverId) {
         WalletUserResponse walletPayer = this.walletRepository.findWalletUserByWalletId(payerId)
                 .orElseThrow(() -> new IllegalArgumentException("Payer not found"));

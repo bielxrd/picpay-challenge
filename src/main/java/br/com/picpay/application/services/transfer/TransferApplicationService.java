@@ -9,6 +9,7 @@ import br.com.picpay.infra.repositories.transfer.ITransferRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -19,6 +20,7 @@ import java.util.UUID;
 public class TransferApplicationService {
     private final ITransferRepository transferRepository;
 
+    @Transactional(rollbackFor = Exception.class)
     public TransferResponse createTransfer(WalletUserResponse payer, WalletUserResponse receiver, double value) {
         Transfer transfer = Transfer.builder()
                 .value(value)
