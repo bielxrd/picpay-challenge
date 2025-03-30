@@ -45,7 +45,6 @@ public class StartupRunner implements ApplicationRunner {
             processBuilder.command("bash", "-c", command);
         }
 
-
         try {
             Process process = processBuilder.start();
 
