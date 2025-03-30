@@ -26,7 +26,7 @@ public class WalletApplicationService {
         return this.walletRepository.save(walletRequest);
     }
 
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional(rollbackFor = Exception.class, readOnly = true)
     public Map<UUID, WalletUserResponse> getWallets(UUID payerId, UUID receiverId) {
         WalletUserResponse walletPayer = this.walletRepository.findWalletUserByWalletId(payerId)
                 .orElseThrow(() -> new IllegalArgumentException("Payer not found"));

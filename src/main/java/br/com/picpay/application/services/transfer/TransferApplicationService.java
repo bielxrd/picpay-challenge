@@ -6,19 +6,27 @@ import br.com.picpay.application.dtos.wallet.WalletUserResponse;
 import br.com.picpay.application.enums.TransferType;
 import br.com.picpay.domain.entities.transfer.Transfer;
 import br.com.picpay.infra.repositories.transfer.ITransferRepository;
+import br.com.picpay.infra.services.sqs.SqsService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j;
+import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
+@Log4j2
 public class TransferApplicationService {
     private final ITransferRepository transferRepository;
+    private final SqsService sqsService;
 
     @Transactional(rollbackFor = Exception.class)
     public TransferResponse createTransfer(WalletUserResponse payer, WalletUserResponse receiver, double value) {
@@ -142,7 +150,7 @@ public class TransferApplicationService {
     public TransfersAmountListResponse getTransfersAmount(UUID userId, LocalDateTime startDate, LocalDateTime endDate) {
         var transfersList = this.transferRepository.findByReceiverIdAndTransferDateBetween(userId, startDate, endDate);
 
-        Double total = transfersList.stream()
+        double total = transfersList.stream()
                 .mapToDouble(Transfer::getValue)
                 .sum();
 
@@ -167,6 +175,55 @@ public class TransferApplicationService {
                 .amount(totalBigDecimal)
                 .transfers(transfersListResponseDto)
                 .build();
+    }
+
+    @Async
+    public void notifyEmailTransfer(String queueName, TransferResponse transferResponse, double value) {
+        try {
+            Map<String, Object> messageAttributesReceiver = Map.of("receiver", transferResponse.getReceiver().getEmail(),
+                    "value", value,
+                    "payerName", transferResponse.getPayer().getName(),
+                    "receiverName", transferResponse.getReceiver().getName(),
+                    "transferDate", transferResponse.getTransferDate(),
+                    "transferType", TransferType.RECEIPT);
+
+            this.sqsService.sendMessage(queueName, transferResponse.getReceiver().getEmail(), messageAttributesReceiver);
+
+            Map<String, Object> messageAttributesPayer = Map.of("payer", transferResponse.getPayer().getEmail(),
+                    "value", value,
+                    "receiverName", transferResponse.getReceiver().getName(),
+                    "payerName", transferResponse.getPayer().getName(),
+                    "transferDate", transferResponse.getTransferDate(),
+                    "transferType", TransferType.PAYMENT);
+
+            this.sqsService.sendMessage(queueName, transferResponse.getPayer().getEmail(), messageAttributesPayer);
+        } catch (Exception e) {
+            log.error("Error to send email message", e);
+        }
+    }
+
+    @Async
+    public void notifySmsTransfer(String queueSmsName, TransferResponse transferResponse, double value) {
+        try {
+            Map<String, Object> messageAttributesReceiver = Map.of(
+                    "value", value,
+                    "payerName", transferResponse.getPayer().getName(),
+                    "receiverName", transferResponse.getReceiver().getName(),
+                    "transferDate", transferResponse.getTransferDate(),
+                    "transferType", TransferType.RECEIPT);
+
+            this.sqsService.sendMessage(queueSmsName, String.valueOf(transferResponse.getReceiver().getPhoneNumber()), messageAttributesReceiver);
+
+            Map<String, Object> messageAttributesPayer = Map.of("value", value,
+                    "receiverName", transferResponse.getReceiver().getName(),
+                    "payerName", transferResponse.getPayer().getName(),
+                    "transferDate", transferResponse.getTransferDate(),
+                    "transferType", TransferType.PAYMENT);
+
+            this.sqsService.sendMessage(queueSmsName, String.valueOf(transferResponse.getPayer().getPhoneNumber()), messageAttributesPayer);
+        } catch (Exception e) {
+            log.error("Error to send sms message", e);
+        }
     }
 
     private boolean isPayer(UUID userId,  Transfer transfer) {

@@ -1,14 +1,14 @@
 package br.com.picpay.infra.services.redis;
 
+import br.com.picpay.shared.utils.CacheUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 @Log4j2
 @Service
@@ -90,6 +90,32 @@ public class RedisService {
             log.error("Error checking if key exists: {}", key, e);
             return false;
         }
+    }
+
+    @Async
+    public void evictCaches(List<Map.Entry<String, String>> entries) {
+        Set<String> cacheKeys = new HashSet<>();
+
+        entries.forEach(entry -> {
+            String key = entry.getKey();
+            String value = entry.getValue();
+            if (key.contains("transfers") && !key.contains("amount")) {
+                cacheKeys.add(CacheUtils.buildKeyFilter(key, value));
+            } else {
+                cacheKeys.add(CacheUtils.buildKey(key, value));
+            }
+        });
+
+        cacheKeys.forEach((key) -> {
+            if (key.contains("*")) {
+                log.info("Deleting keys by filter: {}", key);
+                deleteKeysByFilter(key);
+            } else {
+                log.info("Deleting key with no filter: {}", key);
+                delete(key);
+            }
+        });
+
     }
 
 }
