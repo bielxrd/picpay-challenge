@@ -5,6 +5,7 @@ import br.com.picpay.application.facade.BalanceFacade;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
@@ -19,15 +20,15 @@ public class BalanceController {
     private final BalanceFacade balanceFacade;
 
     @PutMapping("/deposit/{value}")
-    public ResponseEntity<Void> depositBalance(Principal principal, @PathVariable double value) {
-        this.balanceFacade.depositBalance(UUID.fromString(principal.getName()), value);
+    public ResponseEntity<Void> depositBalance(@RequestHeader UUID userId, @PathVariable double value) {
+        this.balanceFacade.depositBalance(userId, value);
         return new ResponseEntity<Void>(HttpStatus.OK);
     }
 
     @GetMapping("/deposit-history")
-    public ResponseEntity<List<DepositBalanceHistoryResponse>> getDepositsBalanceHistory(Principal principal,
+    public ResponseEntity<List<DepositBalanceHistoryResponse>> getDepositsBalanceHistory(@RequestHeader UUID userId,
                                                                                          @RequestParam(required = false, defaultValue = "false") boolean isDateOrdering,
                                                                                          @RequestParam(required = false, defaultValue = "false") boolean isValueOrdering) {
-        return ResponseEntity.ok(this.balanceFacade.getDepositsBalanceHistoryByUserId(UUID.fromString(principal.getName()), isDateOrdering, isValueOrdering));
+        return ResponseEntity.ok(this.balanceFacade.getDepositsBalanceHistoryByUserId(userId, isDateOrdering, isValueOrdering));
     }
 }

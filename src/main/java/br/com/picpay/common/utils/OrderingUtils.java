@@ -1,4 +1,4 @@
-package br.com.picpay.shared.utils;
+package br.com.picpay.common.utils;
 
 import br.com.picpay.application.dtos.deposit_balance_history.DepositBalanceHistoryResponse;
 

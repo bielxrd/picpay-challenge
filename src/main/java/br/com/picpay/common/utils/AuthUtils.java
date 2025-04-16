@@ -1,7 +1,6 @@
-package br.com.picpay.shared.utils;
+package br.com.picpay.common.utils;
 
 import org.springframework.security.crypto.argon2.Argon2PasswordEncoder;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 public class AuthUtils {
 

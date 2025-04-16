@@ -9,7 +9,7 @@ import br.com.picpay.application.services.balance.BalanceApplicationService;
 import br.com.picpay.application.services.transfer.TransferApplicationService;
 import br.com.picpay.application.services.wallet.WalletApplicationService;
 import br.com.picpay.infra.services.redis.RedisService;
-import br.com.picpay.shared.utils.CacheUtils;
+import br.com.picpay.common.utils.CacheUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
@@ -89,7 +89,7 @@ public class TransferProxy {
 
     public BaseResponsePageable getTransfersByUserIdAndPageable(UUID userId, int pageNumber, int pageSize) {
         if (redisService.existsByKey(CacheUtils.buildKey("transfers", userId.toString(), String.valueOf(pageNumber), String.valueOf(pageSize))))
-            return redisService.get(CacheUtils.buildKey("transfers-payed", userId.toString(), String.valueOf(pageNumber), String.valueOf(pageSize)), BaseResponsePageable.class);
+            return redisService.get(CacheUtils.buildKey("transfers", userId.toString(), String.valueOf(pageNumber), String.valueOf(pageSize)), BaseResponsePageable.class);
 
         var transfers = this.transferApplicationService.getTransfersGenericByUserId(userId, pageNumber, pageSize);
 

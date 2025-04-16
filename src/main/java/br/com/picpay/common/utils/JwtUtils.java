@@ -1,4 +1,4 @@
-package br.com.picpay.shared.utils;
+package br.com.picpay.common.utils;
 
 import br.com.picpay.domain.enums.ERole;
 import com.auth0.jwt.JWT;

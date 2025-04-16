@@ -1,4 +1,4 @@
-package br.com.picpay.shared.utils;
+package br.com.picpay.common.utils;
 
 import software.amazon.awssdk.services.ses.model.*;
 

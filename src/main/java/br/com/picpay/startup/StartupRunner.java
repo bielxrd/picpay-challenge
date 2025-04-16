@@ -12,8 +12,7 @@ import java.io.InputStreamReader;
 
 @Log4j2
 @Component
-@Order(1)
-public class StartupRunner implements ApplicationRunner {
+public class StartupRunner {
 
     private final String sqsCommandEmailQueue = """
             aws --endpoint-url=http://localhost:4566 sqs create-queue --queue-name picpay-notification-email-queue --region us-east-1""";
@@ -27,7 +26,7 @@ public class StartupRunner implements ApplicationRunner {
     private final String snsCommand = """
             aws --endpoint-url=http://localhost:4566 sns create-topic --name notification-sms-topic --region us-east-1""";
 
-    @Override
+
     public void run(ApplicationArguments args) throws Exception {
         log.info("Starting application...");
         executeCommand(sqsCommandEmailQueue);

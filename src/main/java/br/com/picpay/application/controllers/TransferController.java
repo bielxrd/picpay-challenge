@@ -20,38 +20,38 @@ public class TransferController {
 
     private final TransferFacade transferFacade;
 
-    @PreAuthorize("hasRole('USER')")
+
     @PostMapping("/transfer")
     public ResponseEntity<Object> transfer(@RequestBody TransferRequest transferRequest) {
         return ResponseEntity.ok(this.transferFacade.transfer(transferRequest));
     }
 
-    @PreAuthorize("hasRole('USER')")
+
     @GetMapping("/payed")
-    public ResponseEntity<BaseResponsePageable> getTransfersPayedByUserIdAndPageable(Principal principal,
+    public ResponseEntity<BaseResponsePageable> getTransfersPayedByUserIdAndPageable(@RequestHeader UUID userId,
                                                                                                                   @RequestParam(required = false, defaultValue = "0") Integer pageNumber,
                                                                                                                   @RequestParam(required = false, defaultValue = "5") Integer pageSize) {
-        return ResponseEntity.ok(this.transferFacade.getTransfersPayedByUserIdAndPageable(UUID.fromString(principal.getName()), pageNumber, pageSize));
+        return ResponseEntity.ok(this.transferFacade.getTransfersPayedByUserIdAndPageable(userId, pageNumber, pageSize));
     }
 
     @GetMapping("/received")
-    public ResponseEntity<BaseResponsePageable> getTransfersReceived(Principal principal,
+    public ResponseEntity<BaseResponsePageable> getTransfersReceived(@RequestHeader UUID userId,
                                                                                                   @RequestParam(required = false, defaultValue = "0") Integer pageNumber,
                                                                                                   @RequestParam(required = false, defaultValue = "5") Integer pageSize) {
-        return ResponseEntity.ok(this.transferFacade.getTransfersReceivedByUserIdAndPageable(UUID.fromString(principal.getName()), pageNumber, pageSize));
+        return ResponseEntity.ok(this.transferFacade.getTransfersReceivedByUserIdAndPageable(userId, pageNumber, pageSize));
     }
 
     @GetMapping("/")
-    public ResponseEntity<BaseResponsePageable> getTransfers(Principal principal,
+    public ResponseEntity<BaseResponsePageable> getTransfers(@RequestHeader UUID userId,
                                                                                           @RequestParam(required = false, defaultValue = "0") Integer pageNumber,
                                                                                           @RequestParam(required = false, defaultValue = "5") Integer pageSize) {
-        return ResponseEntity.ok(this.transferFacade.getTransfersByUserIdAndPageable(UUID.fromString(principal.getName()), pageNumber, pageSize));
+        return ResponseEntity.ok(this.transferFacade.getTransfersByUserIdAndPageable(userId, pageNumber, pageSize));
     }
 
     @GetMapping("/amount")
-    public ResponseEntity<TransfersAmountListResponse> getAmountTransferredFilteredByDateRange(Principal principal,
+    public ResponseEntity<TransfersAmountListResponse> getAmountTransferredFilteredByDateRange(@RequestHeader UUID userId,
                                                                                                @RequestParam LocalDateTime startDate,
                                                                                                @RequestParam LocalDateTime endDate) {
-        return ResponseEntity.ok(this.transferFacade.getAmountTransferredFilteredByDateRange(UUID.fromString(principal.getName()), startDate, endDate));
+        return ResponseEntity.ok(this.transferFacade.getAmountTransferredFilteredByDateRange(userId, startDate, endDate));
     }
 }

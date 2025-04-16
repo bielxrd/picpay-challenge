@@ -1,4 +1,4 @@
-package br.com.picpay.shared.utils;
+package br.com.picpay.common.utils;
 
 public class CacheUtils {
     public static String buildKey(String key, String... values) {

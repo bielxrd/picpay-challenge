@@ -25,9 +25,8 @@ public class UserController {
     }
 
     @GetMapping("/profile")
-    public ResponseEntity<UserProfileDto> getUserProfile(Principal principal) {
-        UUID id = UUID.fromString(principal.getName());
-        return ResponseEntity.ok(userFacade.getUserProfile(id));
+    public ResponseEntity<UserProfileDto> getUserProfile(@RequestHeader UUID userId) {
+        return ResponseEntity.ok(userFacade.getUserProfile(userId));
     }
 
 }

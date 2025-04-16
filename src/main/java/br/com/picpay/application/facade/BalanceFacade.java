@@ -4,8 +4,7 @@ import br.com.picpay.application.dtos.deposit_balance_history.DepositBalanceHist
 import br.com.picpay.application.mappers.BalanceMapper;
 import br.com.picpay.application.services.balance.BalanceApplicationService;
 import br.com.picpay.application.services.deposit_balance_history.DepositBalanceHistoryApplicationService;
-import br.com.picpay.domain.entities.user.DepositBalanceHistory;
-import br.com.picpay.shared.utils.OrderingUtils;
+import br.com.picpay.common.utils.OrderingUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;

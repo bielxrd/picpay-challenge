@@ -1,7 +1,7 @@
 package br.com.picpay.application.consumers;
 
 import br.com.picpay.application.enums.TransferType;
-import br.com.picpay.shared.utils.MessageUtils;
+import br.com.picpay.common.utils.MessageUtils;
 import io.awspring.cloud.sqs.annotation.SqsListener;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;

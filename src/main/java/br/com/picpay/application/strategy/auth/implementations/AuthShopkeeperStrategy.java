@@ -2,8 +2,8 @@ package br.com.picpay.application.strategy.auth.implementations;
 
 import br.com.picpay.application.strategy.auth.interfaces.IAuthStrategy;
 import br.com.picpay.domain.enums.ERole;
-import br.com.picpay.shared.utils.AuthUtils;
-import br.com.picpay.shared.utils.JwtUtils;
+import br.com.picpay.common.utils.AuthUtils;
+import br.com.picpay.common.utils.JwtUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
