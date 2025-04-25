@@ -5,4 +5,11 @@ spring:
     active: default
   cloud:
     config:
-      uri: http://localhost:7000
+      discovery:
+        enabled: true
+        service-id: picpay-challenge-config-server
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
